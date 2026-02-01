@@ -25,7 +25,7 @@ class PokedexBootstrap {
     final list = await remote.getAllIds();
     dataLength = list.length;
 
-    for (int i = startId; i < list.length + 1; i++) {
+    for (int i = startId; i < list.length; i++) {
       try {
         final pokemon = await remote.getDetail(list[i]);
         await local.upsert(pokemon);
