@@ -80,7 +80,7 @@ class PokedexCard extends StatelessWidget {
       bottom: -2,
       right: 2,
       child: CachedNetworkImage(
-        imageUrl: pokedex.image ?? 'https://via.placeholder.com/150',
+        imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokedex.id}.png',
         width: pokedexSize,
         height: pokedexSize,
       ),

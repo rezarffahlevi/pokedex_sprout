@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_sprout/src/bloc/splash/splash_bloc.dart';
 import 'package:pokedex_sprout/src/injection.dart';
+import 'package:pokedex_sprout/src/models/pokedex_model.dart';
+import 'package:pokedex_sprout/src/ui/pokedex_detail_screen.dart';
 import 'package:pokedex_sprout/src/ui/pokedex_list_screen.dart';
 import 'package:pokedex_sprout/src/ui/splash_screen.dart';
 
@@ -19,6 +21,12 @@ class Routes {
         path: PokedexListScreen.routeName,
         builder: (BuildContext context, GoRouterState state) {
           return PokedexListScreen();
+        },
+      ),
+      GoRoute(
+        path: PokedexDetailScreen.routeName,
+        builder: (BuildContext context, GoRouterState state) {
+          return PokedexDetailScreen(pokedex: state.extra as PokedexModel);
         },
       ),
     ];

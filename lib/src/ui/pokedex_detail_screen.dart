@@ -5,31 +5,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pokedex_sprout/src/bloc/pokedex_detail/pokedex_detail_bloc.dart';
+import 'package:pokedex_sprout/src/bloc/pokedex_detail/pokedex_detail_state.dart';
 import 'package:pokedex_sprout/src/bloc/pokedex_list/pokedex_list_bloc.dart';
 import 'package:pokedex_sprout/src/bloc/pokedex_list/pokedex_list_state.dart';
 import 'package:pokedex_sprout/src/bloc/splash/splash_bloc.dart';
 import 'package:pokedex_sprout/src/bloc/splash/splash_state.dart';
+import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/themes/my_asset.dart';
 import 'package:pokedex_sprout/src/themes/my_color.dart';
 import 'package:pokedex_sprout/src/themes/my_text_style.dart';
 import 'package:pokedex_sprout/src/themes/my_theme.dart';
-import 'package:pokedex_sprout/src/ui/pokedex_detail_screen.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 import 'package:pokedex_sprout/src/widgets/general/my_loading.dart';
 import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_card.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-class PokedexListScreen extends StatefulWidget {
-  static const String routeName = '/pokedex-list';
+class PokedexDetailScreen extends StatefulWidget {
+  static const String routeName = '/pokedex-detail';
+  final PokedexModel pokedex;
 
-  const PokedexListScreen({Key? key}) : super(key: key);
+  const PokedexDetailScreen({Key? key, required this.pokedex})
+    : super(key: key);
 
   @override
-  State<PokedexListScreen> createState() => _PokedexListScreenState();
+  State<PokedexDetailScreen> createState() => _PokedexDetailScreenState();
 }
 
-class _PokedexListScreenState extends State<PokedexListScreen> {
-  PokedexListBloc get bloc => context.read<PokedexListBloc>();
+class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
+  PokedexDetailBloc get bloc => context.read<PokedexDetailBloc>();
   final RefreshController _refreshController = RefreshController();
 
   @override
@@ -54,11 +57,10 @@ class _PokedexListScreenState extends State<PokedexListScreen> {
             _refreshController.refreshCompleted();
           },
           onLoading: () async {
-            await bloc.getList(loadMore: true);
           },
           child: SingleChildScrollView(
             padding: EdgeInsets.only(bottom: 22.w),
-            child: BlocConsumer<PokedexListBloc, PokedexListState>(
+            child: BlocConsumer<PokedexDetailBloc, PokedexDetailState>(
               listener: (context, state) {
                 if (state.data.status.isError) {
                   _refreshController.refreshCompleted();
@@ -103,8 +105,8 @@ class _PokedexListScreenState extends State<PokedexListScreen> {
                       state.data.data![index],
                       onPress: () {
                         context.push(
-                          PokedexDetailScreen.routeName,
-                          extra: state.data.data?[index],
+                          '/pokedex-detail',
+                          extra: state.data.data![index],
                         );
                       },
                     );
