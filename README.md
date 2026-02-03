@@ -10,18 +10,30 @@ Pokedex Sprout adalah aplikasi **Mobile Pokedex** yang dibuat dengan **Flutter**
 
 ---
 ## 📸 Screenshots
-
-### Pokémon List
-![Pokemon List](docs/1.png)
-
-### Pokémon Detail
-![About Tab](docs/2.png)
-![Base Stats Tab](docs/3.png)
-
-### Landscape Mode
-![Landscape](docs/4.png)
-![Landscape Detail](docs/5.png)
-![Landscape Detail 2](docs/6.png)
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/1.png" width="250"/>
+    </td>
+    <td align="center">
+      <img src="docs/2.png" width="250"/>
+    </td>
+    <td align="center">
+      <img src="docs/3.png" width="250"/>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/5.png" width="500"/>
+    </td>
+    <td align="center">
+      <img src="docs/4.png" width="500"/>
+    </td>
+    <td align="center">
+      <img src="docs/6.png" width="500"/>
+    </td>
+  </tr>
+</table>
 
 
 ## 🚀 Fitur Utama
@@ -52,17 +64,17 @@ Layout menyesuaikan ukuran dan orientasi layar.
 ## 🧩 Struktur Kode
 
 Struktur project bersifat sederhana dan feature-based:
-
-lib/
-- src/
-    - bloc/          → State management (Bloc Cubit)
-    - models/        → Model data
-    - repositories/  → Repositori API / services
-    - ui/            → Halaman UI
-    - themes/        → Warna, font, aset
-    - widgets/       → Komponen UI reusable
-    - utils/         → Helper & utilitas
-
+```
+- lib/
+    - src/
+        - bloc/          → State management (Bloc Cubit)
+        - models/        → Model data
+        - repositories/  → Repositori API / services
+        - ui/            → Halaman UI
+        - themes/        → Warna, font, aset
+        - widgets/       → Komponen UI reusable
+        - utils/         → Helper & utilitas
+```
 Project ini mengunakan arsitektur MVVM dan dibuat sesimple mungkin, namun tetap menjaga pemisahan concern agar mudah dipahami dan dikembangkan.
 
 ---
@@ -70,11 +82,14 @@ Project ini mengunakan arsitektur MVVM dan dibuat sesimple mungkin, namun tetap 
 ## 🛠 Cara Menjalankan Project
 
 ### Install dependency
+```
 flutter pub get
+```
 
 ### Jalankan aplikasi
+```
 flutter run
-
+```
 ---
 
 ## 📚 Referensi
