@@ -37,7 +37,11 @@ class _AppState extends State<App> {
         BlocProvider(create: (context) => inject<PokedexListBloc>()),
         BlocProvider(create: (context) => inject<PokedexDetailBloc>()),
       ],
-      child: MaterialApp.router(title: 'Pokedex Sprout', routerConfig: _router),
+      child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
+        title: 'Pokedex Sprout',
+        routerConfig: _router,
+      ),
     );
   }
 }
