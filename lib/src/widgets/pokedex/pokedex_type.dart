@@ -24,13 +24,13 @@ class PokedexType extends StatelessWidget {
             Text(
               type.displayName,
               textScaler: TextScaler.noScaling,
-              style: MyTextStyle.h8.semiBold.withColor(Colors.white),
+              style: MyTextStyle.h7.semiBold.withColor(Colors.white),
             ),
             const SizedBox(width: 5),
             Text(
               extra,
               textScaler: TextScaler.noScaling,
-              style: MyTextStyle.h8.semiBold.withColor(Colors.white),
+              style: MyTextStyle.h7.semiBold.withColor(Colors.white),
             ),
           ],
         ),

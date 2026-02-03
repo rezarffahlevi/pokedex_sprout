@@ -1,5 +1,7 @@
 import 'dart:developer';
+import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,9 +17,14 @@ import 'package:pokedex_sprout/src/themes/my_asset.dart';
 import 'package:pokedex_sprout/src/themes/my_color.dart';
 import 'package:pokedex_sprout/src/themes/my_text_style.dart';
 import 'package:pokedex_sprout/src/themes/my_theme.dart';
+import 'package:pokedex_sprout/src/utils/utils.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 import 'package:pokedex_sprout/src/widgets/general/my_loading.dart';
+import 'package:pokedex_sprout/src/widgets/general/my_sized_box.dart';
+import 'package:pokedex_sprout/src/widgets/pokedex/background_decoration.dart';
 import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_card.dart';
+import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_info_card.dart';
+import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_type.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class PokedexDetailScreen extends StatefulWidget {
@@ -34,6 +41,12 @@ class PokedexDetailScreen extends StatefulWidget {
 class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
   PokedexDetailBloc get bloc => context.read<PokedexDetailBloc>();
   final RefreshController _refreshController = RefreshController();
+  PokedexModel get pokedex => widget.pokedex;
+
+  final GlobalKey _currentTextKey = GlobalKey();
+  final GlobalKey _targetTextKey = GlobalKey();
+  double textDiffLeft = 0.0;
+  double textDiffTop = 0.0;
 
   @override
   void initState() {
@@ -44,79 +57,119 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
   @override
   Widget build(BuildContext context) {
     bool isPotrait = MediaQuery.of(context).orientation == Orientation.portrait;
-    return Scaffold(
-      appBar: AppBar(title: Text('Pokedex', style: MyTextStyle.h2.ultraBold)),
-      body: SafeArea(
-        child: SmartRefresher(
-          controller: _refreshController,
-          enablePullDown: true,
-          enablePullUp: true,
-          onRefresh: () async {
-            bloc.init();
-            await Future.delayed(Duration(seconds: 1));
-            _refreshController.refreshCompleted();
-          },
-          onLoading: () async {
-          },
-          child: SingleChildScrollView(
-            padding: EdgeInsets.only(bottom: 22.w),
-            child: BlocConsumer<PokedexDetailBloc, PokedexDetailState>(
-              listener: (context, state) {
-                if (state.data.status.isError) {
-                  _refreshController.refreshCompleted();
-                  _refreshController.loadFailed();
-                } else if (state.data.status.isLoaded) {
-                  _refreshController.refreshCompleted();
-                  _refreshController.loadComplete();
-                } else if (state.data.status.isLoadNoData ||
-                    state.data.status.isNoData) {
-                  _refreshController.refreshCompleted();
-                  _refreshController.loadNoData();
-                }
-              },
-              builder: (context, state) {
-                if (state.data.status.isInitial ||
-                    state.data.status.isLoading) {
-                  return MyLoading();
-                }
+    double pokeSize = isPotrait ? 200.w : 230.h;
 
-                if (state.data.status.isNoData ||
-                    (state.data.status.isLoaded &&
-                        (state.data.data?.isEmpty ?? true))) {
-                  return Center(child: Text('Tidak ada data'));
-                }
-
-                return GridView.builder(
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: isPotrait ? 1.4 : 1.9,
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
+    return SafeArea(
+      top: false,
+      child: Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
+        ),
+        extendBodyBehindAppBar: true,
+        body: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            BackgroundDecoration(pokedex: pokedex),
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  MySizedBox.bloodyLargeVertical(height: 90.h),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${pokedex.name?.capitalize()}',
+                              style: MyTextStyle.h1.ultraBold.withColor(
+                                Colors.white,
+                              ),
+                            ),
+                            Row(children: _buildTypes(context)),
+                          ],
+                        ),
+                        Text(
+                          '#${pokedex.id}',
+                          style: MyTextStyle.h2.bold
+                              .withColor(MyColor.white)
+                              .withOpacity(0.7),
+                        ),
+                      ],
+                    ),
                   ),
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: state.data.data?.length ?? 0,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 12.w,
+                  SizedBox(height: 130.h),
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _buildAppBarPokeballDecoration(),
+                      PokedexInfoCard(pokedex: pokedex,),
+                      Positioned(
+                        top: -(pokeSize - 40.h),
+                        left: 0,
+                        right: 0,
+                        child: CachedNetworkImage(
+                          imageUrl:
+                              'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokedex.id}.png',
+                          width: pokeSize,
+                          height: pokeSize,
+                        ),
+                      ),
+                    ],
                   ),
-                  itemBuilder: (context, index) {
-                    return PokedexCard(
-                      state.data.data![index],
-                      onPress: () {
-                        context.push(
-                          '/pokedex-detail',
-                          extra: state.data.data![index],
-                        );
-                      },
-                    );
-                  },
-                );
-              },
+                ],
+              ),
             ),
+            // PokedexHiglight(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBarPokeballDecoration() {
+    final pokeSize = 300.w;
+    bool isPotrait = MediaQuery.of(context).orientation == Orientation.portrait;
+
+    return Positioned(
+      top: isPotrait ? -230 : -430,
+      right: 0,
+      child: IgnorePointer(
+        ignoring: true,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0, end: 1),
+          duration: const Duration(seconds: 20),
+          onEnd: () {},
+          builder: (_, value, child) {
+            return Transform.rotate(angle: value * 2 * pi, child: child);
+          },
+          child: Image(
+            image: AssetImage(MyAsset.background),
+            width: pokeSize,
+            height: pokeSize,
+            color: Colors.white24,
           ),
         ),
       ),
     );
+  }
+
+  List<Widget> _buildTypes(BuildContext context) {
+    List types = [pokedex.primaryType];
+    if (pokedex.secondaryType != null) {
+      types.add(pokedex.secondaryType);
+    }
+
+    return types
+        .map(
+          (type) => Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 6, left: 6),
+            child: PokedexType(PokedexTypes.parse(type ?? '')),
+          ),
+        )
+        .toList();
   }
 }
