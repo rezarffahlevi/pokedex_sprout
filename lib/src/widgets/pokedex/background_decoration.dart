@@ -1,10 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pokedex_sprout/src/models/pokedex_model.dart';
-import 'package:pokedex_sprout/src/themes/my_asset.dart';
-import 'package:pokedex_sprout/src/themes/my_color.dart';
 import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_type.dart';
 
 class _BoxDecoration extends StatelessWidget {

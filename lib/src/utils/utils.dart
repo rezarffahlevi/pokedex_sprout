@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class Utils {
   static final GlobalKey<NavigatorState> navigatorKey =
       new GlobalKey<NavigatorState>();
+
   static dismissKeyboard() {
     FocusManager.instance.primaryFocus?.unfocus();
   }

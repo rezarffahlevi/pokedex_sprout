@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pokedex_sprout/src/bloc/splash/splash_bloc.dart';
-import 'package:pokedex_sprout/src/injection.dart';
 import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/ui/pokedex_detail_screen.dart';
 import 'package:pokedex_sprout/src/ui/pokedex_list_screen.dart';

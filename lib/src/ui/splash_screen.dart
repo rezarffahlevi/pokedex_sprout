@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,8 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:pokedex_sprout/src/bloc/splash/splash_bloc.dart';
 import 'package:pokedex_sprout/src/bloc/splash/splash_state.dart';
 import 'package:pokedex_sprout/src/themes/my_asset.dart';
-import 'package:pokedex_sprout/src/themes/my_color.dart';
-import 'package:pokedex_sprout/src/themes/my_theme.dart';
 import 'package:pokedex_sprout/src/ui/pokedex_list_screen.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 

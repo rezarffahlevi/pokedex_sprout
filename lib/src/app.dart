@@ -16,9 +16,6 @@ class App extends StatefulWidget {
 
   @override
   State<App> createState() => _AppState();
-
-  static _AppState of(BuildContext context) =>
-      context.findAncestorStateOfType<_AppState>()!;
 }
 
 class _AppState extends State<App> {

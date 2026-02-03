@@ -10,7 +10,6 @@ class SplashBloc extends Cubit<SplashState> {
 
   init() async {
     try {
-      // bootstrap.start();
       await Utils.addDelay(1);
       emit(state.copyWith(data: ViewData.loaded('completed')));
     } catch (e) {
