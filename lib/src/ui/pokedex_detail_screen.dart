@@ -37,7 +37,7 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
   @override
   void initState() {
     super.initState();
-    bloc.init();
+    bloc.init(pokedex);
   }
 
   @override

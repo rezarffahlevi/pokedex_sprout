@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pokedex_sprout/src/bloc/pokedex_detail/pokedex_detail_bloc.dart';
+import 'package:pokedex_sprout/src/bloc/pokedex_detail/pokedex_detail_state.dart';
 import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/themes/my_color.dart';
 import 'package:pokedex_sprout/src/themes/my_text_style.dart';
+import 'package:pokedex_sprout/src/utils/utils.dart';
 import 'package:pokedex_sprout/src/widgets/general/main_tab_view.dart';
 import 'package:pokedex_sprout/src/widgets/general/my_sized_box.dart';
 
@@ -21,6 +25,26 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
   AnimationController get slideController => AnimationController(vsync: this);
   PokedexModel get pokedex => widget.pokedex;
 
+  List<MoveItem> parseMoves(List moves) {
+    return moves
+        .map((e) {
+          final levelUp = e['version_group_details'].firstWhere(
+            (v) => v['move_learn_method']['name'] == 'level-up',
+            orElse: () => null,
+          );
+
+          if (levelUp == null) return null;
+
+          return MoveItem(
+            name: e['move']['name'],
+            level: levelUp['level_learned_at'],
+          );
+        })
+        .whereType<MoveItem>()
+        .toList()
+      ..sort((a, b) => a.level.compareTo(b.level));
+  }
+
   @override
   Widget build(BuildContext context) {
     final cardMinHeight = 1.sh * PokedexInfoCard.minCardHeightFraction;
@@ -29,7 +53,7 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
     return Container(
       constraints: BoxConstraints(
         minHeight: cardMinHeight,
-        maxHeight: isPotrait ? 1.sh : 2.sh,
+        maxHeight: isPotrait ? 1.sh : 4.sh,
       ),
       child: MainTabView(
         paddingAnimation: slideController,
@@ -40,11 +64,24 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
               padding: EdgeInsetsGeometry.all(16.w),
               child: Column(
                 children: [
-                  _labelAbout('Species', pokedex.species ?? ''),
+                  BlocBuilder<PokedexDetailBloc, PokedexDetailState>(
+                    builder: (context, state) {
+                      return _labelAbout(
+                        'Species',
+                        state.pokedex.data?.species ?? '',
+                      );
+                    },
+                  ),
                   MySizedBox.extraSmallVertical(),
-                  _labelAbout('Height', pokedex.height.toString()),
+                  _labelAbout(
+                    'Height',
+                    Utils.formatHeightPokedex(pokedex.height),
+                  ),
                   MySizedBox.extraSmallVertical(),
-                  _labelAbout('Weight', pokedex.weight.toString()),
+                  _labelAbout(
+                    'Weight',
+                    Utils.formatWeightPokedex(pokedex.weight),
+                  ),
                   MySizedBox.extraSmallVertical(),
                   _labelAbout('Abilities', pokedex.abilities ?? ''),
                 ],
@@ -71,13 +108,26 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
             ),
           ),
           MainTabData(label: 'Evolution', child: Container()),
-          MainTabData(label: 'Moves', child: Container()),
+          MainTabData(
+            label: 'Moves',
+            child: Padding(
+              padding: EdgeInsetsGeometry.all(16.w),
+              child: Column(
+                children: parseMoves(pokedex.raw?['moves']).map((e) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: _labelAbout('Lv. ${e.level}', e.name),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  _labelAbout(String label, String value) {
+  Widget _labelAbout(String label, String value) {
     return Row(
       children: [
         SizedBox(
@@ -92,7 +142,7 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
     );
   }
 
-  _labelStats(String label, String value) {
+  Widget _labelStats(String label, String value) {
     double val = double.tryParse(value) ?? 0;
     final progress = val / 100;
     Color color = val > 50 ? MyColor.lightTeal : MyColor.lightRed;

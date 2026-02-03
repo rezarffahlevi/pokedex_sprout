@@ -1,22 +1,22 @@
 import 'package:pokedex_sprout/src/utils/utils.dart';
 
 class PokedexModel {
-  final int? id;
-  final String? name;
-  final String? image;
-  final List<String>? types;
-  final int? height;
-  final int? weight;
-  final int? hp;
-  final int? attack;
-  final int? defense;
-  final int? spAttack;
-  final int? spDefense;
-  final int? speed;
-  final String? abilities;
-  final String? species;
+  int? id;
+  String? name;
+  String? image;
+  List<String>? types;
+  int? height;
+  int? weight;
+  int? hp;
+  int? attack;
+  int? defense;
+  int? spAttack;
+  int? spDefense;
+  int? speed;
+  String? abilities;
+  String? species;
 
-  final Map<String, dynamic>? raw;
+  Map<String, dynamic>? raw;
 
   PokedexModel({
     this.id,
@@ -57,7 +57,14 @@ class PokedexModel {
           .map((e) => e['ability']['name'].toString().capitalize())
           .join(', '),
       species: json['species']['name'].toString().capitalize(),
-      raw: json['raw_json'] != null ? json : null,
+      raw: json,
     );
   }
+}
+
+class MoveItem {
+  final String name;
+  final int level;
+
+  MoveItem({required this.name, required this.level});
 }

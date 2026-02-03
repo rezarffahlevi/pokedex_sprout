@@ -27,4 +27,16 @@ class PokedexRepoApiImpl extends PokedexRepoApi {
     final res = await dio.get('/api/v2/pokemon/$id/');
     return PokedexModel.fromMap(res.data);
   }
+
+  @override
+  Future<String> getSpecies(int id) async {
+    String getSpeciesName(Map<String, dynamic> json) {
+      return json['genera']
+          .firstWhere((e) => e['language']['name'] == 'en')['genus']
+          .replaceAll(' Pokémon', '');
+    }
+
+    final res = await dio.get('/api/v2/pokemon-species/$id/');
+    return getSpeciesName(res.data);
+  }
 }

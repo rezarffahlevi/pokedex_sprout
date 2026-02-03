@@ -1,25 +1,22 @@
-
-
 import 'package:equatable/equatable.dart';
+import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 
 class PokedexDetailState extends Equatable {
-  final ViewData data;
+  final ViewData<PokedexModel> pokedex;
 
   const PokedexDetailState({
-    this.data = const ViewData(),
+    this.pokedex = const ViewData(),
   });
 
   PokedexDetailState copyWith({
-    ViewData? data,
+    ViewData<PokedexModel>? pokedex,
   }) {
     return PokedexDetailState(
-      data: data ?? this.data,
+      pokedex: pokedex ?? this.pokedex,
     );
   }
 
   @override
-  List get props => [
-        data,
-      ];
+  List get props => [pokedex];
 }
