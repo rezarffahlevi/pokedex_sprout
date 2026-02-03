@@ -1,24 +1,30 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
+import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/repositories/pokedex_repo_api.dart';
+
 class PokedexRepoApiImpl extends PokedexRepoApi {
   final Dio dio;
 
   PokedexRepoApiImpl({required this.dio});
-
   @override
-  Future<List<int>> getAllIds() async {
-    final res = await dio.get('/api/v2/pokemon', queryParameters: {'limit': 2000});
+  Future<List<PokedexModel>> getList({int page = 1, int limit = 15}) async {
+    final offset = (page - 1) * limit;
+    final res = await dio.get(
+      '/api/v2/pokemon',
+      queryParameters: {'offset': offset, 'limit': limit},
+    );
 
     return (res.data['results'] as List).map((e) {
       final uri = Uri.parse(e['url']);
-      return int.parse(uri.pathSegments[uri.pathSegments.length - 2]);
+      final id = int.parse(uri.pathSegments[uri.pathSegments.length - 2]);
+      return PokedexModel(id: id, name: e['name']);
     }).toList();
   }
 
   @override
-  Future<Map<String, dynamic>> getDetail(int id) async {
+  Future<PokedexModel> getDetail(int id) async {
     final res = await dio.get('/api/v2/pokemon/$id/');
-    return res.data;
+    return PokedexModel.fromMap(res.data);
   }
 }

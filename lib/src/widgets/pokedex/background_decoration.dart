@@ -61,7 +61,7 @@ class BackgroundDecorationState extends State<BackgroundDecoration> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       constraints: const BoxConstraints.expand(),
-      color: PokedexTypes.parse(pokedex.primaryType ?? '').color,
+      color: PokedexTypes.parse(pokedex.types?.first).color,
     );
   }
 

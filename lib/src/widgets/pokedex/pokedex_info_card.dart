@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pokedex_sprout/src/models/pokedex_model.dart';
 import 'package:pokedex_sprout/src/themes/my_color.dart';
@@ -25,19 +23,10 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.sizeOf(context).height;
-    final safeArea = MediaQuery.paddingOf(context);
-    final appBarHeight = AppBar().preferredSize.height;
-
-    final cardMinHeight = screenHeight * PokedexInfoCard.minCardHeightFraction;
-    final cardMaxHeight = screenHeight - appBarHeight - safeArea.top;
+    final cardMinHeight = 1.sh * PokedexInfoCard.minCardHeightFraction;
     bool isPotrait = MediaQuery.of(context).orientation == Orientation.portrait;
 
     return Container(
-      // AutoSlideUpPanel(
-      //   minHeight: cardMinHeight,
-      //   maxHeight: cardMaxHeight,
-      //   onPanelSlide: (position) => slideController.value = position,
       constraints: BoxConstraints(
         minHeight: cardMinHeight,
         maxHeight: isPotrait ? 1.sh : 2.sh,
@@ -53,9 +42,9 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
                 children: [
                   _labelAbout('Species', pokedex.species ?? ''),
                   MySizedBox.extraSmallVertical(),
-                  _labelAbout('Height', pokedex.height.toString() ?? ''),
+                  _labelAbout('Height', pokedex.height.toString()),
                   MySizedBox.extraSmallVertical(),
-                  _labelAbout('Weight', pokedex.weight.toString() ?? ''),
+                  _labelAbout('Weight', pokedex.weight.toString()),
                   MySizedBox.extraSmallVertical(),
                   _labelAbout('Abilities', pokedex.abilities ?? ''),
                 ],
@@ -68,18 +57,15 @@ class _PokedexInfoCardState extends State<PokedexInfoCard>
               padding: EdgeInsetsGeometry.all(16.w),
               child: Column(
                 children: [
-                  _labelStats('HP', pokedex.hp.toString() ?? ''),
+                  _labelStats('HP', pokedex.hp.toString()),
                   MySizedBox.extraSmallVertical(),
-                  _labelStats('Attack', pokedex.attack.toString() ?? ''),
+                  _labelStats('Attack', pokedex.attack.toString()),
                   MySizedBox.extraSmallVertical(),
-                  _labelStats('Defense', pokedex.defense.toString() ?? ''),
+                  _labelStats('Defense', pokedex.defense.toString()),
                   MySizedBox.extraSmallVertical(),
-                  _labelStats('Sp. Attack', pokedex.spAttack.toString() ?? ''),
+                  _labelStats('Sp. Attack', pokedex.spAttack.toString()),
                   MySizedBox.extraSmallVertical(),
-                  _labelStats(
-                    'Sp. Defense',
-                    pokedex.spDefense.toString() ?? '',
-                  ),
+                  _labelStats('Sp. Defense', pokedex.spDefense.toString()),
                 ],
               ),
             ),

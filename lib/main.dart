@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pokedex_sprout/src/app.dart';
 import 'package:pokedex_sprout/src/injection.dart';
-import 'package:pokedex_sprout/src/utils/pokedex_bootstrap.dart';
 
 void main() {
   runZonedGuarded(
@@ -26,7 +25,6 @@ void main() {
       };
 
       await initInjection();
-      // WidgetsBinding.instance.addObserver(inject<AppLifecycleHandler>());
 
       return runApp(
         ScreenUtilInit(

@@ -4,13 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pokedex_sprout/src/bloc/pokedex_list/pokedex_list_state.dart';
 import 'package:pokedex_sprout/src/injection.dart';
 import 'package:pokedex_sprout/src/models/pokedex_model.dart';
-import 'package:pokedex_sprout/src/repositories/pokedex_repo_local.dart';
-import 'package:pokedex_sprout/src/utils/pokedex_bootstrap.dart';
+import 'package:pokedex_sprout/src/repositories/pokedex_repo_api.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 
 class PokedexListBloc extends Cubit<PokedexListState> {
   PokedexListBloc() : super(const PokedexListState());
-  PokedexRepoLocal get local => inject<PokedexRepoLocal>();
+  final repo = inject<PokedexRepoApi>();
 
   init() async {
     getList();
@@ -28,25 +27,36 @@ class PokedexListBloc extends Cubit<PokedexListState> {
       } else {
         emit(state.copyWith(data: ViewData.loading(), page: 1));
       }
-      final res = await local.getList(page: state.page);
-      log('res ${res.length} page: ${state.page} ${PokedexBootstrap.process} < ${PokedexBootstrap.dataLength}}');
+      final res = await repo.getList(page: state.page);
+      log('page: ${state.page} length:${res.length}');
       List<PokedexModel> result = loadMore
           ? [...state.data.data ?? [], ...res]
           : res;
       if (res.isEmpty) {
-        if (PokedexBootstrap.process < PokedexBootstrap.dataLength) {
-          emit(
-            state.copyWith(data: ViewData.loaded(result), page: state.page - 1),
-          );
-          return;
-        }
         emit(state.copyWith(data: ViewData.noData()));
       } else {
         emit(state.copyWith(data: ViewData.loaded(result)));
+        mappingDetail(res);
       }
     } catch (e) {
-      log('catch ${e}');
       emit(state.copyWith(data: ViewData.error(e.toString())));
+    }
+  }
+
+  mappingDetail(List<PokedexModel> res) async {
+    for (var e in res) {
+      if (e.id != null) {
+        final detail = await repo.getDetail(e.id!);
+        final index = state.data.data?.indexWhere((test) => test.id == e.id);
+
+        List<PokedexModel> result = state.data.data ?? [];
+        if (index != null && index >= 0) {
+          result[index] = detail;
+        } else {
+          result.add(detail);
+        }
+        emit(state.copyWith(data: ViewData.loaded(result)));
+      }
     }
   }
 }

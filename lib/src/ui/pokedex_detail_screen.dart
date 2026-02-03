@@ -62,10 +62,6 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
     return SafeArea(
       top: false,
       child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: Colors.white,
-          backgroundColor: Colors.transparent,
-        ),
         extendBodyBehindAppBar: true,
         body: Stack(
           fit: StackFit.expand,
@@ -106,7 +102,7 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
                     clipBehavior: Clip.none,
                     children: [
                       _buildAppBarPokeballDecoration(),
-                      PokedexInfoCard(pokedex: pokedex,),
+                      PokedexInfoCard(pokedex: pokedex),
                       Positioned(
                         top: -(pokeSize - 40.h),
                         left: 0,
@@ -121,6 +117,22 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
                     ],
                   ),
                 ],
+              ),
+            ),
+            Positioned(
+              left: 6.w,
+              top: kToolbarHeight - 20.h,
+              child: IconButton(
+                onPressed: () => context.pop(),
+                icon: Container(
+                  height: 40.h,
+                  width: 40.h,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(child: Icon(Icons.arrow_back_ios, size: 18.h)),
+                ),
               ),
             ),
             // PokedexHiglight(),
@@ -158,18 +170,14 @@ class _PokedexDetailScreenState extends State<PokedexDetailScreen> {
   }
 
   List<Widget> _buildTypes(BuildContext context) {
-    List types = [pokedex.primaryType];
-    if (pokedex.secondaryType != null) {
-      types.add(pokedex.secondaryType);
-    }
-
-    return types
-        .map(
-          (type) => Padding(
-            padding: const EdgeInsets.only(top: 6, bottom: 6, left: 6),
-            child: PokedexType(PokedexTypes.parse(type ?? '')),
-          ),
-        )
-        .toList();
+    return pokedex.types
+            ?.map(
+              (type) => Padding(
+                padding: const EdgeInsets.only(top: 6, bottom: 6, left: 6),
+                child: PokedexType(PokedexTypes.parse(type ?? '')),
+              ),
+            )
+            .toList() ??
+        [];
   }
 }

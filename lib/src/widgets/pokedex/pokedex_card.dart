@@ -17,7 +17,7 @@ class PokedexCard extends StatelessWidget {
   const PokedexCard(this.pokedex, {super.key, this.onPress});
   @override
   Widget build(BuildContext context) {
-    Color color = PokedexTypes.parse(pokedex.primaryType ?? '').color;
+    Color color = PokedexTypes.parse(pokedex.types?.first).color;
     return LayoutBuilder(
       builder: (context, constrains) {
         final itemHeight = constrains.maxHeight;
@@ -80,7 +80,8 @@ class PokedexCard extends StatelessWidget {
       bottom: -2,
       right: 2,
       child: CachedNetworkImage(
-        imageUrl: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokedex.id}.png',
+        imageUrl:
+            'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${pokedex.id}.png',
         width: pokedexSize,
         height: pokedexSize,
       ),
@@ -130,18 +131,14 @@ class _CardContent extends StatelessWidget {
   }
 
   List<Widget> _buildTypes(BuildContext context) {
-    List types = [pokedex.primaryType];
-    if (pokedex.secondaryType != null) {
-      types.add(pokedex.secondaryType);
-    }
-
-    return types
-        .map(
-          (type) => Padding(
-            padding: const EdgeInsets.only(bottom: 6),
-            child: PokedexType(PokedexTypes.parse(type ?? '')),
-          ),
-        )
-        .toList();
+    return pokedex.types
+            ?.map(
+              (type) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: PokedexType(PokedexTypes.parse(type)),
+              ),
+            )
+            .toList() ??
+        [];
   }
 }

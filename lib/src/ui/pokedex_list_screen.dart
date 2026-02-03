@@ -16,6 +16,7 @@ import 'package:pokedex_sprout/src/themes/my_theme.dart';
 import 'package:pokedex_sprout/src/ui/pokedex_detail_screen.dart';
 import 'package:pokedex_sprout/src/utils/view_data.dart';
 import 'package:pokedex_sprout/src/widgets/general/my_loading.dart';
+import 'package:pokedex_sprout/src/widgets/general/my_shimmer.dart';
 import 'package:pokedex_sprout/src/widgets/pokedex/pokedex_card.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -87,7 +88,7 @@ class _PokedexListScreenState extends State<PokedexListScreen> {
                 return GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: isPotrait ? 1.4 : 1.9,
+                    childAspectRatio: isPotrait ? 1.4 : 2.4,
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                   ),
@@ -99,14 +100,18 @@ class _PokedexListScreenState extends State<PokedexListScreen> {
                     vertical: 12.w,
                   ),
                   itemBuilder: (context, index) {
-                    return PokedexCard(
-                      state.data.data![index],
-                      onPress: () {
-                        context.push(
-                          PokedexDetailScreen.routeName,
-                          extra: state.data.data?[index],
-                        );
-                      },
+                    final item = state.data.data?[index];
+                    return MyShimmer(
+                      show: item?.types != null,
+                      child: PokedexCard(
+                        state.data.data![index],
+                        onPress: () {
+                          context.push(
+                            PokedexDetailScreen.routeName,
+                            extra: item,
+                          );
+                        },
+                      ),
                     );
                   },
                 );

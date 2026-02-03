@@ -3,17 +3,20 @@ import 'package:pokedex_sprout/src/themes/my_color.dart';
 import 'package:pokedex_sprout/src/themes/my_text_style.dart';
 
 class PokedexType extends StatelessWidget {
-  const PokedexType(this.type, {super.key, this.extra = ''});
+  const PokedexType(this.type, {super.key});
 
   final PokedexTypes type;
-  final String extra;
 
   @override
   Widget build(BuildContext context) {
+    bool isPotrait = MediaQuery.of(context).orientation == Orientation.portrait;
     return Material(
       color: Colors.transparent,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        padding: EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: isPotrait ? 2 : 0,
+        ),
         decoration: ShapeDecoration(
           shape: const StadiumBorder(),
           color: (MyColor.white).withValues(alpha: 0.3),
@@ -24,13 +27,9 @@ class PokedexType extends StatelessWidget {
             Text(
               type.displayName,
               textScaler: TextScaler.noScaling,
-              style: MyTextStyle.h7.semiBold.withColor(Colors.white),
-            ),
-            const SizedBox(width: 5),
-            Text(
-              extra,
-              textScaler: TextScaler.noScaling,
-              style: MyTextStyle.h7.semiBold.withColor(Colors.white),
+              style: isPotrait
+                  ? MyTextStyle.h7.semiBold.withColor(Colors.white)
+                  : MyTextStyle.h9.semiBold.withColor(Colors.white),
             ),
           ],
         ),
@@ -66,8 +65,8 @@ enum PokedexTypes {
 
   const PokedexTypes(this.displayName, this.color);
 
-  static PokedexTypes parse(String rawValue) => values.firstWhere(
-    (e) => e.name == rawValue.toLowerCase(),
+  static PokedexTypes parse(String? rawValue) => values.firstWhere(
+    (e) => e.name == rawValue?.toLowerCase(),
     orElse: () => unknown,
   );
 }
